@@ -2,8 +2,10 @@ import numpy as np
 
 
 class Data:
-    headers: list = []
-    data: np.array
+    def __init__(self) -> None:
+        self.headers: list = []
+        self.cols: list = []
+        self.col_count: int
 
     def read_file(self, file, delimiter: str, has_headers: bool):
         if has_headers:
@@ -12,8 +14,8 @@ class Data:
         first_line = file.readline()
         first_row = process_line(first_line, delimiter)
         first_row = parse_ints(first_row)
+        self.col_count = len(first_row)
 
-        self.data = np.array([], shape=(0, len(first_row)))
         self.__add_row(first_row)
 
         for line in file.readlines():
@@ -23,11 +25,28 @@ class Data:
 
         file.close()
 
+        if not has_headers:
+            self.headers = [f"col{i}" for i in range(1, self.col_count + 1)]
+
     def __add_row(self, row: list):
-        try:
-            self.data = np.append(self.data, [row], axis=0)
-        except ValueError:
-            raise RowLengthError("Row has wrong number of columns.")
+        if not self.cols:
+            self.cols.extend([] for i in range(self.col_count))
+
+        if len(row) != self.col_count:
+            raise RowLengthError(f"Row has wrong number of columns ({len(row)}).")
+
+        for i, el in enumerate(row):
+            self.cols[i].append(el)
+
+    def __str__(self):
+        disp_str = " ".join(self.headers) + "\n"
+        row_len = len(self.cols[0])
+        for i in range(row_len):
+            for col in self.cols:
+                disp_str += f"{col[i]} "
+            disp_str += "\n"
+
+        return disp_str
 
 
 class RowLengthError(ValueError):
