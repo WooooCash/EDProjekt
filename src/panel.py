@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+import codecs
 
 from src.data import Data
 
@@ -24,7 +25,7 @@ class Panel(tk.Frame):
         bt_debug_data.grid(sticky=tk.EW)
 
     def __read_data(self):
-        file = filedialog.askopenfile()
+        file = codecs.open(filedialog.askopenfilename(), encoding='utf-8')
 
         # parametry delimiter i has_headers trzeba brać z jakiś inputów "Entry"
-        self.data.read_file(file, delimiter=" ", has_headers=False)
+        self.data.read_file(file, delimiter=" ", has_headers=True)
