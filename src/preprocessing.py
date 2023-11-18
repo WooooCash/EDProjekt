@@ -1,3 +1,5 @@
+from statistics import mean, stdev
+
 """
 Columnar operation function structure:
 
@@ -24,6 +26,7 @@ Jeśli wyjdzie na to że niektóre operacje będą dosyć skomplikowane i będą
 to sobie wydzielimy katalog src/preprocessing/ w którym każda operacja będzie w swoim pliku
 """
 
+
 def to_numeric(column: list[str], config: dict) -> list[int]:
     """
     column: list of string values
@@ -44,8 +47,6 @@ def to_numeric(column: list[str], config: dict) -> list[int]:
     return modified_col
 
 
-
-
 def discretize(column: list[float], config: dict) -> list:
     """
     column: list of floating point values
@@ -53,7 +54,25 @@ def discretize(column: list[float], config: dict) -> list:
         bucket_count: int
     """
 
-    bucket_count = config["bucket_count"] 
+    bucket_count = config["bucket_count"]
     modified_col = column[:]
+
+    return modified_col
+
+
+def standardize(column: list[float], config: dict) -> list:
+    """
+    column: list of floating point values
+    config: empty
+    """
+
+    modified_col = []
+
+    col_mean = mean(column)
+    col_stdev = stdev(column)
+
+    for value in column:
+        new_val = (value - col_mean) / col_stdev
+        modified_col.append(round(new_val, 3))
 
     return modified_col
