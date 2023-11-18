@@ -1,11 +1,11 @@
-import numpy as np
+# import numpy as np
 
 
 class Data:
     def __init__(self) -> None:
         self.headers: list = []
         self.cols: list = []
-        self.col_count: int
+        self.col_count: int = 0
 
     def read_file(self, file, delimiter: str, has_headers: bool):
         if has_headers:

@@ -20,5 +20,5 @@ if __name__ == "__main__":
     root.title("TK_Grafika")
     app = MainApplication(root)
     app.pack(side="top", fill="both", expand=True)
-
+    root.geometry('500x400')
     root.mainloop()
