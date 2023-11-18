@@ -37,7 +37,6 @@ class Data:
         if len(row) != self.col_count:
             raise RowLengthError(f"Row has wrong number of columns ({len(row)}).")
 
-        print("ROW", row)
         for i, el in enumerate(row):
             self.cols[i].append(el)
 
@@ -45,7 +44,7 @@ class Data:
         disp_str = " | ".join(self.headers) + "\n"
         disp_str += "---\n"
         row_len = len(self.cols[0])
-        print("ROW_LEN", row_len)
+
         for i in range(row_len):
             disp_str += " | ".join([str(col[i]) for col in self.cols])
             disp_str += "\n"
