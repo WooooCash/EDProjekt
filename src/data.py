@@ -1,6 +1,3 @@
-# import numpy as np
-
-
 class Data:
     def __init__(self) -> None:
         self.headers: list = []
