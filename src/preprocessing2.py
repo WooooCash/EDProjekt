@@ -53,7 +53,7 @@ def discretize(column: list[float], config: dict) -> list:
 
 
 # zmiana przedziału wartości z oryginalnego <min; max> na przedział, którego zakres wartości poda użytkownik <a; b>
-def map(column: list[float], config: dict) -> list:
+def remap(column: list[float], config: dict) -> list:
     """
     config:
         a: int
