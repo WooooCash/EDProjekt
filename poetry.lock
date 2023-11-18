@@ -115,7 +115,18 @@ pluggy = ">=0.12,<2.0"
 [package.extras]
 testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
+[[package]]
+name = "tksheet"
+version = "6.2.9"
+description = "Tkinter table / sheet widget"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "tksheet-6.2.9.tar.gz", hash = "sha256:aa3617264b4d2b282e5a40352511998f60ccf27857e67a0f4c82ab4baf837f5c"},
+]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11,<3.13"
-content-hash = "fc56700d25e3126c7c09830e48fbd845c62a02015ffd1f955d75837bf625d963"
+content-hash = "a364e7180098f8ff9fb4cfbd4cd55161bdd14361e859d1080fc9a5854942d580"

@@ -3,13 +3,16 @@ import tkinter as tk
 from tkinter import filedialog
 
 from src.data import Data
+from src.table_frame import Table
 
 SEPARATOR_MAPPING = {"Średnik": ";", "Tabulator": "\t", "Spacja": " "}
 
 
 class Panel(tk.Frame):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, table_frame: Table, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
+
+        self.table_frame = table_frame
 
         self.structure_label = tk.Label(self, width=20)
         self.structure_label.grid()
@@ -42,8 +45,7 @@ class Panel(tk.Frame):
         bt_debug_data.grid(sticky=tk.EW)
 
     def __read_data(self, has_headers: bool, separator: str):
-        file = codecs.open(filedialog.askopenfilename(), encoding="utf-8")
-        self.data.read_file(file, delimiter=separator, has_headers=has_headers)
+        self.table_frame.load_file(has_headers, separator)
 
     def __generate_separator_options(self, variable: tk.StringVar):
         options_list = []
