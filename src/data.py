@@ -1,3 +1,6 @@
+from typing import Callable
+
+
 class Data:
     def __init__(self) -> None:
         self.__reset()
@@ -39,6 +42,9 @@ class Data:
 
         for i, el in enumerate(row):
             self.cols[i].append(el)
+
+    def process_column(self, col_idx: int, operation: Callable, config: dict = {}):
+        self.cols[col_idx] = operation(self.cols[col_idx], config)
 
     def __str__(self):
         disp_str = " | ".join(self.headers) + "\n"
