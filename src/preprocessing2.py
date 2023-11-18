@@ -30,9 +30,14 @@ import seaborn as sns
 
 
 # dyskretyzacja zmiennych rzeczywistych na określoną liczbę przedziałów;
-def discretize(column: list[float], num_col: int) -> list:
+def discretize(column: list[float], config: dict) -> list:
+    """
+    config:
+        num_bins: int
+    """
+    num_bins = config["num_bins"]
     data = pd.DataFrame({'column': column})
-    discretized_column = pd.cut(data['column'], bins=num_col, labels=False)
+    discretized_column = pd.cut(data['column'], bins=num_bins, labels=False)
     return discretized_column.to_list()
 
 
@@ -48,8 +53,12 @@ def discretize(column: list[float], num_col: int) -> list:
 
 
 # zmiana przedziału wartości z oryginalnego <min; max> na przedział, którego zakres wartości poda użytkownik <a; b>
-def discretize2(column: list[float], config: dict) -> list:
-    # config = {'a': 0, 'b': 1}
+def map(column: list[float], config: dict) -> list:
+    """
+    config:
+        a: int
+        b: int
+    """
     a = config['a']
     b = config['b']
 
