@@ -1,10 +1,10 @@
 class Data:
     def __init__(self) -> None:
-        self.headers: list = []
-        self.cols: list = []
-        self.col_count: int = 0
+        self.__reset()
 
     def read_file(self, file, delimiter: str, has_headers: bool):
+        self.__reset()
+
         if has_headers:
             self.headers = process_line(file.readline(), delimiter)
 
@@ -25,6 +25,11 @@ class Data:
         if not has_headers:
             self.headers = [f"col{i}" for i in range(1, self.col_count + 1)]
 
+    def __reset(self):
+        self.headers: list = []
+        self.cols: list = []
+        self.col_count: int = 0
+
     def __add_row(self, row: list):
         if not self.cols:
             self.cols.extend([] for i in range(self.col_count))
@@ -32,15 +37,17 @@ class Data:
         if len(row) != self.col_count:
             raise RowLengthError(f"Row has wrong number of columns ({len(row)}).")
 
+        print("ROW", row)
         for i, el in enumerate(row):
             self.cols[i].append(el)
 
     def __str__(self):
-        disp_str = " ".join(self.headers) + "\n"
+        disp_str = " | ".join(self.headers) + "\n"
+        disp_str += "---\n"
         row_len = len(self.cols[0])
+        print("ROW_LEN", row_len)
         for i in range(row_len):
-            for col in self.cols:
-                disp_str += f"{col[i]} "
+            disp_str += " | ".join([str(col[i]) for col in self.cols])
             disp_str += "\n"
 
         return disp_str
