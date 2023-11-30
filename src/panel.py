@@ -8,7 +8,7 @@ from src.table_frame import Table
 SEPARATOR_MAPPING = {"Średnik": ";", "Tabulator": "\t", "Spacja": " "}
 
 
-class Panel(tk.Frame):
+class LoadPanel(tk.Frame):
     def __init__(self, parent, table_frame: Table, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
@@ -16,10 +16,6 @@ class Panel(tk.Frame):
 
         self.structure_label = tk.Label(self, width=20)
         self.structure_label.grid()
-
-        # Narazie tu trzymamy data, ale docelowo nie powinno być w panelu, a w innej częsci
-        # w której będziemy faktycznie wyświetlać dane i wykonywać na nich operacje
-        self.data = Data()
 
         # VARS
         header = tk.BooleanVar()
@@ -35,14 +31,12 @@ class Panel(tk.Frame):
             text="Otwórz plik",
             command=lambda: self.__read_data(header.get(), separator.get()),
         )
-        bt_debug_data = tk.Button(self, text="Debug", command=lambda: print(self.data))
 
         # PLACEMENT
         header_options.grid(sticky=tk.EW)
         for option in separator_options:
             option.grid(sticky=tk.EW)
         bt_load.grid(sticky=tk.EW)
-        bt_debug_data.grid(sticky=tk.EW)
 
     def __read_data(self, has_headers: bool, separator: str):
         self.table_frame.load_file(has_headers, separator)

@@ -1,7 +1,6 @@
 import tkinter as tk
+from src.main_panel import MainPanel
 
-# from app.image_frame import ImageFrame
-from src.panel import Panel
 from src.table_frame import Table
 
 
@@ -10,7 +9,7 @@ class MainApplication(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
 
         self.table_frame = Table(self)
-        self.panel = Panel(self, self.table_frame)
+        self.panel = MainPanel(self, self.table_frame)
 
         self.panel.grid(row=0, column=0)
         self.table_frame.grid(row=0, column=1)

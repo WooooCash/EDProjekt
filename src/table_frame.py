@@ -24,6 +24,14 @@ class Table(tk.Frame):
         self.data.read_file(file, delimiter=separator, has_headers=has_headers)
         self.__set_table_contents()
 
+    def get_selected_cols(self):
+        return list(self.sheet.get_selected_columns())
+
+    def set_column(self, idx: int, new_col: list):
+        self.data.cols[idx] = new_col
+        self.__set_table_contents()
+
     def __set_table_contents(self):
         self.sheet.headers(self.data.headers)
         self.sheet.set_sheet_data(self.data.as_rows())
+        
