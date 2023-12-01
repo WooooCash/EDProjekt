@@ -3,8 +3,8 @@ from tkinter import messagebox
 from typing import Callable
 
 from src.preprocessing import standardize, to_numeric
-from src.preprocessing2 import discretize
-from src.preprocessing_windows import DiscretizeWindow
+from src.preprocessing2 import discretize, remap
+from src.preprocessing_windows import DiscretizeWindow, RemapWindow
 from src.table_frame import Table
 
 
@@ -39,9 +39,17 @@ class OperationPanel(tk.Frame):
             command=lambda: self.__immediate(standardize),
         )
 
-        self.to_numeric_button.grid()
-        self.discretize_button.grid()
-        self.standardize_button.grid()
+        self.remap_button = tk.Button(
+            self,
+            text="Map",
+            # command=lambda: print(self.table_frame.sheet.get_selected_columns()),
+            command=lambda: self.__window_op(remap, RemapWindow),
+        )
+
+        self.to_numeric_button.grid(sticky=tk.EW)
+        self.discretize_button.grid(sticky=tk.EW)
+        self.standardize_button.grid(sticky=tk.EW)
+        self.remap_button.grid(sticky=tk.EW)
 
     def set_config(self, **kwargs):
         self.config = kwargs
@@ -49,7 +57,7 @@ class OperationPanel(tk.Frame):
     def __immediate(self, func: Callable):
         cols = self.table_frame.get_selected_cols()
         if len(cols) != 1:
-            messagebox.showerror("One (only one) column must be selected", "Error")
+            messagebox.showerror("Error", "One (only one) column must be selected")
             return
 
         col_idx = cols[0]
@@ -61,7 +69,7 @@ class OperationPanel(tk.Frame):
     def __window_op(self, func: Callable, window_class):
         cols = self.table_frame.get_selected_cols()
         if len(cols) != 1:
-            messagebox.showerror("One (only one) column must be selected", "Error")
+            messagebox.showerror("Error", "One (only one) column must be selected")
             return
 
         col_idx = cols[0]

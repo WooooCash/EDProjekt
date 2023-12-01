@@ -17,7 +17,7 @@ class MainApplication(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.title("TK_Grafika")
+    root.title("TK_ED")
     app = MainApplication(root)
     app.pack(side="top", fill="both", expand=True)
     # root.geometry('500x400')

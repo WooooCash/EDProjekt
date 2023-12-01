@@ -27,11 +27,13 @@ to sobie wydzielimy katalog src/preprocessing/ w którym każda operacja będzie
 """
 
 
-def to_numeric(column: list[str], config: dict) -> list[int]:
+def to_numeric(column: list, config: dict) -> list[int]:
     """
     column: list of string values
     config: empty
     """
+    if type(column[0]) == int:
+        return column
 
     modified_col = []
     mapping: dict[str, int] = {}
@@ -43,19 +45,6 @@ def to_numeric(column: list[str], config: dict) -> list[int]:
             mapping[value] = numeric_val
 
         modified_col.append(numeric_val)
-
-    return modified_col
-
-
-def discretize(column: list[float], config: dict) -> list:
-    """
-    column: list of floating point values
-    config:
-        bucket_count: int
-    """
-
-    bucket_count = config["bucket_count"]
-    modified_col = column[:]
 
     return modified_col
 
