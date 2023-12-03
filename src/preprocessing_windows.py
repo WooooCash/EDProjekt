@@ -1,7 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
 from tkinter import messagebox
-from typing import Callable
 
 class DiscretizeWindow(tk.Toplevel):
     def __init__(self, parent, col_name: str):

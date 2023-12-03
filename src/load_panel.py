@@ -14,7 +14,7 @@ class LoadPanel(tk.Frame):
 
         self.table_frame = table_frame
 
-        self.structure_label = tk.Label(self, width=20)
+        self.structure_label = tk.Label(self, width=30)
         self.structure_label.grid()
 
         # VARS

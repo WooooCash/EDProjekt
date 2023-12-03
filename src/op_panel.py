@@ -15,7 +15,7 @@ class OperationPanel(tk.Frame):
         self.table_frame = table_frame
         self.config = {}
 
-        self.structure_label = tk.Label(self, width=20)
+        self.structure_label = tk.Label(self, width=30)
         self.structure_label.grid()
 
         self.to_numeric_button = tk.Button(
