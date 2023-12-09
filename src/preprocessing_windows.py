@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
+
 class DiscretizeWindow(tk.Toplevel):
     def __init__(self, parent, col_name: str):
         super().__init__(master=parent)
@@ -22,6 +23,7 @@ class DiscretizeWindow(tk.Toplevel):
             self.destroy()
         except ValueError:
             messagebox.showerror("Error", "Must be int")
+
 
 class RemapWindow(tk.Toplevel):
     def __init__(self, parent, col_name: str):

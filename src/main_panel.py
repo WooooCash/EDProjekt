@@ -6,6 +6,7 @@ from src.op_panel import OperationPanel
 from src.table_frame import Table
 from src.visual_panel import VisualPanel
 
+
 class MainPanel(ttk.Notebook):
     def __init__(self, parent, table_frame: Table, *args, **kwargs):
         ttk.Notebook.__init__(self, parent, *args, **kwargs)
@@ -18,4 +19,3 @@ class MainPanel(ttk.Notebook):
         self.add(op_panel, text="Ops")
         self.add(visual_panel, text="Visual")
         self.add(classify_panel, text="Classify")
-

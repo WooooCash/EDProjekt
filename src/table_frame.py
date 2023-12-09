@@ -32,6 +32,5 @@ class Table(tk.Frame):
         self.__set_table_contents()
 
     def __set_table_contents(self):
-        self.sheet.headers(self.data.headers)
-        self.sheet.set_sheet_data(self.data.as_rows())
-        
+        self.sheet.headers(self.data.headers[1:])
+        self.sheet.set_sheet_data(self.data.as_rows()[0])
