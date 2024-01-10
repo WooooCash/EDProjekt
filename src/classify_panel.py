@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from src.binary_vector import BinaryVectorizer
 
 from src.col_choice_window import ColChoice
 from src.table_frame import Table
@@ -37,8 +38,13 @@ class ClassifyPanel(tk.Frame):
             header_key for header_key in headers.keys() if header_key != class_col_idx
         ]
         rows_with_id, col_mapping = self.__get_data(arg_header_idxs)
+        attr_cols, class_col = self.__get_cols(cols, class_col_idx)
         print("arg_header_idxs", arg_header_idxs)
         print("col_mapping", col_mapping)
+
+        binary_vectorizer = BinaryVectorizer(rows_with_id, attr_cols, class_col)
+        result_data = binary_vectorizer()
+
 
     def __get_header_list(self):
         return self.table_frame.data.get_headers()
@@ -46,7 +52,11 @@ class ClassifyPanel(tk.Frame):
     def __get_data(self, col_selection):
         return self.table_frame.data.as_rows_id(col_selection)
 
-    def __get_col(self, idx):
-        col = self.table_frame.data.cols[idx]
-        header = self.table_frame.data.headers[idx]
-        return col, header
+    def __get_cols(
+        self, col_idxs: list[int], class_col_idx: int
+    ) -> tuple[list[list], list]:
+        attr_cols = []
+        for idx in col_idxs:
+            if idx != class_col_idx:
+                attr_cols.append(self.table_frame.data.cols[idx])
+        return attr_cols, self.table_frame.data.cols[class_col_idx]
