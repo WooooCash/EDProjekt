@@ -15,13 +15,13 @@ class ClassifyPanel(tk.Frame):
         self.structure_label = tk.Label(self, width=30)
         self.structure_label.grid()
 
-        self.classify_button = tk.Button(
-            self, text="Classify", command=self.__classify, background="#AAFFAA"
+        self.cluster_button = tk.Button(
+            self, text="Cluster", command=self.__cluster, background="#AAFFAA"
         )
 
-        self.classify_button.grid(sticky=tk.EW)
+        self.cluster_button.grid(sticky=tk.EW)
 
-    def __classify(self):
+    def __cluster(self):
         cols = self.table_frame.get_selected_cols()
         if len(cols) < 3:
             messagebox.showerror("Error", "Must select at least 3 columns")

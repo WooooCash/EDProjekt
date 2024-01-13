@@ -24,8 +24,8 @@ Jeśli wyjdzie na to że niektóre operacje będą dosyć skomplikowane i będą
 to sobie wydzielimy katalog src/preprocessing/ w którym każda operacja będzie w swoim pliku
 """
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 
@@ -36,8 +36,8 @@ def discretize(column: list[float], config: dict) -> list:
         num_bins: int
     """
     num_bins = config["num_bins"]
-    data = pd.DataFrame({'column': column})
-    discretized_column = pd.cut(data['column'], bins=num_bins, labels=False)
+    data = pd.DataFrame({"column": column})
+    discretized_column = pd.cut(data["column"], bins=num_bins, labels=False)
     return discretized_column.to_list()
 
 
@@ -59,14 +59,15 @@ def remap(column: list[float], config: dict) -> list:
         a: int
         b: int
     """
-    a = config['a']
-    b = config['b']
+    a = config["a"]
+    b = config["b"]
 
     scale_factor = (b - a) / (max(column) - min(column))
     mapped_values = [a + scale_factor * (value - min(column)) for value in column]
 
-    rounded_col = [round(value, 10) for value in
-                   mapped_values]  # zaokrąglam wyniki do 10, nie potrzebnie ale do rozważenia
+    rounded_col = [
+        round(value, 10) for value in mapped_values
+    ]  # zaokrąglam wyniki do 10, nie potrzebnie ale do rozważenia
 
     return rounded_col
 
@@ -84,14 +85,16 @@ def remap(column: list[float], config: dict) -> list:
 # wykres 2D (rozproszeń dwuwymiarowy) - zależność dwóch zmiennych, z możliwością wybrania opcji o zastosowaniu kolorów/znaczników do klas
 def plot_2d(x, y, classes, colors=None, markers=None):
     if colors is None:
-        colors = sns.color_palette("husl", n_colors=len(set(classes))) if classes else 'b'
+        colors = (
+            sns.color_palette("husl", n_colors=len(set(classes))) if classes else "b"
+        )
     if markers is None:
-        markers = ['o'] * len(set(classes)) if classes else 'o'
+        markers = ["o"] * len(set(classes)) if classes else "o"
 
-    data = {'x': x, 'y': y, 'class': classes}
+    data = {"x": x, "y": y, "class": classes}
     df = pd.DataFrame(data)
 
-    sns.scatterplot(x='x', y='y', hue='class', data=df, palette=colors, style='class', markers=markers)
+    sns.scatterplot(x="x", y="y", hue="class", data=df, palette=colors, style="class")
 
     plt.show()
 
@@ -110,14 +113,14 @@ def plot_2d(x, y, classes, colors=None, markers=None):
 # histogram (zmienna dyskretna, zmienna ciągła - podanie liczby przedziałów)
 def create_histogram_discrete(data, num_bins, discrete_data=True):
     if discrete_data:
-        plt.hist(data, bins=num_bins, edgecolor='black', alpha=0.7, align='left')
-        plt.title('Histogram (Discrete)')
+        plt.hist(data, bins=num_bins, edgecolor="black", alpha=0.7, align="left")
+        plt.title("Histogram (Discrete)")
     else:
-        plt.hist(data, bins=num_bins, edgecolor='black', alpha=0.7)
-        plt.title('Histogram (Continuous)')
+        plt.hist(data, bins=num_bins, edgecolor="black", alpha=0.7)
+        plt.title("Histogram (Continuous)")
 
-    plt.xlabel('Values')
-    plt.ylabel('Frequency')
+    plt.xlabel("Values")
+    plt.ylabel("Frequency")
 
     # Show the plot
     plt.show()

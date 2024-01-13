@@ -1,3 +1,4 @@
+import random
 from dataclasses import dataclass
 from enum import IntEnum
 
@@ -33,7 +34,8 @@ class BinaryVectorizer:
 
         self.boundaries: list[Boundary] = []
 
-        self.removed_points = 0
+        self.removed_points = []
+        self.removed_point_count = 0
 
         self.__remove_points()
 
@@ -42,12 +44,14 @@ class BinaryVectorizer:
         # Cleaning stacked points is done during iterations, only if there is a "xor" situation
 
     def __call__(self):
-        #TODO: FIX INFINITE LOOPING WHEN GETS STUCK ON SECOND IF (maybe cleaning stacked points?)
+        # TODO: FIX INFINITE LOOPING WHEN GETS STUCK ON SECOND IF (maybe cleaning stacked points?)
         while True:
             max_group = 0
             max_group_col = -1
             val = 0
             side: Side = Side.LEFT
+
+            visited_rows = []
 
             for i, col in enumerate(self.arg_sorted_cols):
                 curr_group = 0
@@ -61,6 +65,7 @@ class BinaryVectorizer:
                     elif j < len(col) - 1:
                         val1 = self.attr_cols[i][col[j + 1]]
                         class1 = self.class_col[col[j + 1]]
+                        visited_rows.extend([col[j], col[j + 1]])
                         if val0 == val1 and class0 != class1:
                             break
 
@@ -74,7 +79,7 @@ class BinaryVectorizer:
                 # right side
                 curr_group = 0
                 class_val = self.class_col[col[-1]]
-                for j in range(len(col)-1, -1, -1):
+                for j in range(len(col) - 1, -1, -1):
                     val0 = self.attr_cols[i][col[j]]
                     class0 = self.class_col[col[j]]
                     if class0 != class_val:
@@ -82,6 +87,7 @@ class BinaryVectorizer:
                     elif j > 0:
                         val1 = self.attr_cols[i][col[j - 1]]
                         class1 = self.class_col[col[j - 1]]
+                        visited_rows.extend([col[j], col[j - 1]])
                         if val0 == val1 and class0 != class1:
                             break
 
@@ -92,14 +98,20 @@ class BinaryVectorizer:
                         side = Side.LEFT
                         val = val0
 
+            if max_group < 1:
+                row_to_remove = random.choice(visited_rows)
+                self.__remove_rows([row_to_remove])
+                self.removed_points.append(row_to_remove)
+                self.removed_point_count += 1
+                print(f"No boundary could be set. Removing row {row_to_remove}.")
+                continue
+
             new_boundary = Boundary(val, side, max_group_col)
             self.boundaries.append(new_boundary)
 
             # Removing appropriate rows
             rows_to_remove = self.arg_sorted_cols[max_group_col][:max_group]
-            for i, col in enumerate(self.attr_cols):
-                self.attr_cols[i] = self.__del_indices(col, rows_to_remove)
-            self.class_col = self.__del_indices(self.class_col, rows_to_remove)
+            self.__remove_rows(rows_to_remove)
 
             row_count = len(self.class_col)
             print(f"{row_count}/{self.initial_count} rows left to cluster")
@@ -107,14 +119,22 @@ class BinaryVectorizer:
             if len(self.class_col) == 0:
                 break
 
-            # resort to update all  other cols
-            self.__argsort_cols()
+        print(f"Created a total of {len(self.boundaries)} boundaries for binary vector")
+        return self.boundaries
 
     def __argsort_cols(self):
         self.arg_sorted_cols = [self.__argsort(col) for col in self.attr_cols]
 
     def __argsort(self, col: list) -> list:
         return np.argsort(np.array(col)).tolist()
+
+    def __remove_rows(self, indices: list[int]):
+        for i, col in enumerate(self.attr_cols):
+            self.attr_cols[i] = self.__del_indices(col, indices)
+        self.class_col = self.__del_indices(self.class_col, indices)
+
+        # resort to update all  other cols
+        self.__argsort_cols()
 
     def __del_indices(self, col: list, indices: list) -> list:
         return np.delete(np.array(col), indices).tolist()
