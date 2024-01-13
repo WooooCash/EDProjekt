@@ -58,5 +58,5 @@ class ClassifyPanel(tk.Frame):
         attr_cols = []
         for idx in col_idxs:
             if idx != class_col_idx:
-                attr_cols.append(self.table_frame.data.cols[idx])
-        return attr_cols, self.table_frame.data.cols[class_col_idx]
+                attr_cols.append(self.table_frame.data.cols[idx+1])
+        return attr_cols, self.table_frame.data.cols[class_col_idx+1]

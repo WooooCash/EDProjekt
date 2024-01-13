@@ -60,7 +60,7 @@ class OperationPanel(tk.Frame):
             messagebox.showerror("Error", "One (only one) column must be selected")
             return
 
-        col_idx = cols[0]
+        col_idx = cols[0] + 1
         column, _ = self.__get_col(col_idx)
 
         new_col = func(column, {})
@@ -72,7 +72,7 @@ class OperationPanel(tk.Frame):
             messagebox.showerror("Error", "One (only one) column must be selected")
             return
 
-        col_idx = cols[0]
+        col_idx = cols[0] + 1
         column, header = self.__get_col(col_idx)
 
         popup = window_class(self, header)

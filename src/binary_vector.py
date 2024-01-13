@@ -33,9 +33,16 @@ class BinaryVectorizer:
 
         self.boundaries: list[Boundary] = []
 
+        self.removed_points = 0
+
+        self.__remove_points()
+
+        self.initial_count = len(self.class_col)
+
         # Cleaning stacked points is done during iterations, only if there is a "xor" situation
 
     def __call__(self):
+        #TODO: FIX INFINITE LOOPING WHEN GETS STUCK ON SECOND IF (maybe cleaning stacked points?)
         while True:
             max_group = 0
             max_group_col = -1
@@ -57,18 +64,17 @@ class BinaryVectorizer:
                         if val0 == val1 and class0 != class1:
                             break
 
-                    else:
-                        curr_group += 1
-                        if curr_group > max_group:
-                            max_group = curr_group
-                            max_group_col = i
-                            side = Side.LEFT
-                            val = val0
+                    curr_group += 1
+                    if curr_group > max_group:
+                        max_group = curr_group
+                        max_group_col = i
+                        side = Side.LEFT
+                        val = val0
 
                 # right side
                 curr_group = 0
                 class_val = self.class_col[col[-1]]
-                for j in range(0, len(col), -1):
+                for j in range(len(col)-1, -1, -1):
                     val0 = self.attr_cols[i][col[j]]
                     class0 = self.class_col[col[j]]
                     if class0 != class_val:
@@ -79,13 +85,12 @@ class BinaryVectorizer:
                         if val0 == val1 and class0 != class1:
                             break
 
-                    else:
-                        curr_group += 1
-                        if curr_group > max_group:
-                            max_group = curr_group
-                            max_group_col = i
-                            side = Side.LEFT
-                            val = val0
+                    curr_group += 1
+                    if curr_group > max_group:
+                        max_group = curr_group
+                        max_group_col = i
+                        side = Side.LEFT
+                        val = val0
 
             new_boundary = Boundary(val, side, max_group_col)
             self.boundaries.append(new_boundary)
@@ -96,13 +101,14 @@ class BinaryVectorizer:
                 self.attr_cols[i] = self.__del_indices(col, rows_to_remove)
             self.class_col = self.__del_indices(self.class_col, rows_to_remove)
 
+            row_count = len(self.class_col)
+            print(f"{row_count}/{self.initial_count} rows left to cluster")
+
             if len(self.class_col) == 0:
                 break
 
             # resort to update all  other cols
             self.__argsort_cols()
-
-
 
     def __argsort_cols(self):
         self.arg_sorted_cols = [self.__argsort(col) for col in self.attr_cols]
@@ -112,3 +118,6 @@ class BinaryVectorizer:
 
     def __del_indices(self, col: list, indices: list) -> list:
         return np.delete(np.array(col), indices).tolist()
+
+    def __remove_points(self):
+        pass
