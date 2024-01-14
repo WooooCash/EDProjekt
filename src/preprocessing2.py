@@ -24,9 +24,14 @@ Jeśli wyjdzie na to że niektóre operacje będą dosyć skomplikowane i będą
 to sobie wydzielimy katalog src/preprocessing/ w którym każda operacja będzie w swoim pliku
 """
 
+from typing import Optional
+
+import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import pandas as pd
 import seaborn as sns
+from src.preprocessing import to_numeric
 
 
 # dyskretyzacja zmiennych rzeczywistych na określoną liczbę przedziałów;
@@ -83,7 +88,7 @@ def remap(column: list[float], config: dict) -> list:
 
 
 # wykres 2D (rozproszeń dwuwymiarowy) - zależność dwóch zmiennych, z możliwością wybrania opcji o zastosowaniu kolorów/znaczników do klas
-def plot_2d(x, y, classes, colors=None, markers=None):
+def plot_2d(x, y, classes, colors=None, markers=None, lines: Optional[tuple] = None):
     if colors is None:
         colors = (
             sns.color_palette("husl", n_colors=len(set(classes))) if classes else "b"
@@ -94,7 +99,26 @@ def plot_2d(x, y, classes, colors=None, markers=None):
     data = {"x": x, "y": y, "class": classes}
     df = pd.DataFrame(data)
 
-    sns.scatterplot(x="x", y="y", hue="class", data=df, palette=colors, style="class")
+    # sns.scatterplot(x="x", y="y", hue="class", data=df, palette=colors, style="class")
+    classes = to_numeric(classes, {})
+    cmap = plt.cm.jet
+    cmaplist = [cmap(i) for i in range(cmap.N)]
+    cmap = cmap.from_list('Custom cmap', cmaplist, cmap.N)
+
+    n = len(set(classes))
+    print("DISTINCT N: ", n)
+    bounds = np.linspace(0,n,n+1)
+    print("BOUNDS", bounds)
+    norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+
+    plt.scatter(x, y, c=classes, cmap=cmap)
+
+    if (lines):
+        vlines, hlines = lines
+        for vl in vlines:
+            plt.axvline(x=vl)
+        for hl in hlines:
+            plt.axhline(y=hl)
 
     plt.show()
 

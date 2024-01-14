@@ -31,6 +31,10 @@ class Table(tk.Frame):
         self.data.cols[idx] = new_col
         self.__set_table_contents()
 
+    def remove_rows(self, row_ids: list[int]):
+        self.data.remove_rows(row_ids)
+        self.__set_table_contents()
+
     def __set_table_contents(self):
         self.sheet.headers(self.data.headers[1:])
         self.sheet.set_sheet_data(self.data.as_rows()[0])

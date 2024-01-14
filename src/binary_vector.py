@@ -15,6 +15,7 @@ class Boundary:
     value: float | int
     side: Side
     col: int
+    cl: int
 
     def classify(self, row: list[float | int]):
         if self.side == Side.LEFT:
@@ -22,13 +23,19 @@ class Boundary:
 
         return row[self.col] >= self.value
 
+    def __str__(self):
+        return f"val: {self.value}, side: {self.side}, col: {self.col}, class: {self.cl}"
+
 
 class BinaryVectorizer:
-    def __init__(self, rows_with_id: dict, attr_cols: list[list], class_col: list):
+    def __init__(
+        self, rows_with_id: dict, attr_cols: list[list], class_col: list, id_col: list
+    ):
         self.rows_with_id = rows_with_id
         self.attr_cols = attr_cols
         self.arg_sorted_cols = [self.__argsort(col) for col in attr_cols]
         self.class_col = class_col
+        self.id_col = id_col
 
         self.row_ids = rows_with_id.keys()
 
@@ -43,11 +50,12 @@ class BinaryVectorizer:
 
         # Cleaning stacked points is done during iterations, only if there is a "xor" situation
 
-    def __call__(self):
+    def __call__(self) -> list[Boundary]:
         # TODO: FIX INFINITE LOOPING WHEN GETS STUCK ON SECOND IF (maybe cleaning stacked points?)
         while True:
             max_group = 0
             max_group_col = -1
+            max_group_class = -1
             val = 0
             side: Side = Side.LEFT
 
@@ -75,6 +83,7 @@ class BinaryVectorizer:
                         max_group_col = i
                         side = Side.LEFT
                         val = val0
+                        max_group_class = class0
 
                 # right side
                 curr_group = 0
@@ -95,22 +104,30 @@ class BinaryVectorizer:
                     if curr_group > max_group:
                         max_group = curr_group
                         max_group_col = i
-                        side = Side.LEFT
+                        side = Side.RIGHT
                         val = val0
+                        max_group_class = class0
 
             if max_group < 1:
                 row_to_remove = random.choice(visited_rows)
+                row_id = self.id_col[row_to_remove]
                 self.__remove_rows([row_to_remove])
-                self.removed_points.append(row_to_remove)
+                self.removed_points.append(row_id)
                 self.removed_point_count += 1
                 print(f"No boundary could be set. Removing row {row_to_remove}.")
                 continue
 
-            new_boundary = Boundary(val, side, max_group_col)
+            new_boundary = Boundary(val, side, max_group_col, max_group_class)
             self.boundaries.append(new_boundary)
+            print(new_boundary)
 
             # Removing appropriate rows
-            rows_to_remove = self.arg_sorted_cols[max_group_col][:max_group]
+            col = self.arg_sorted_cols[max_group_col]
+            rows_to_remove = (
+                col[:max_group]
+                if side == Side.LEFT
+                else col[len(col)-max_group:]
+            )
             self.__remove_rows(rows_to_remove)
 
             row_count = len(self.class_col)
@@ -120,6 +137,10 @@ class BinaryVectorizer:
                 break
 
         print(f"Created a total of {len(self.boundaries)} boundaries for binary vector")
+        print(self.boundaries)
+        print(
+            f"Removed {self.removed_point_count} points. {self.initial_count-self.removed_point_count} remain."
+        )
         return self.boundaries
 
     def __argsort_cols(self):
@@ -129,9 +150,10 @@ class BinaryVectorizer:
         return np.argsort(np.array(col)).tolist()
 
     def __remove_rows(self, indices: list[int]):
-        for i, col in enumerate(self.attr_cols):
-            self.attr_cols[i] = self.__del_indices(col, indices)
+        self.attr_cols = np.delete(np.array(self.attr_cols), indices, -1).tolist()
         self.class_col = self.__del_indices(self.class_col, indices)
+        print(f"Deleting ids: {[self.id_col[i] for i in indices]}")
+        self.id_col = self.__del_indices(self.id_col, indices)
 
         # resort to update all  other cols
         self.__argsort_cols()

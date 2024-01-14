@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from src.binary_vector import BinaryVectorizer
+from src.preprocessing2 import plot_2d
 
 from src.col_choice_window import ColChoice
 from src.table_frame import Table
@@ -38,12 +39,20 @@ class ClassifyPanel(tk.Frame):
             header_key for header_key in headers.keys() if header_key != class_col_idx
         ]
         rows_with_id, col_mapping = self.__get_data(arg_header_idxs)
-        attr_cols, class_col = self.__get_cols(cols, class_col_idx)
+        id_col, attr_cols, class_col = self.__get_cols(cols, class_col_idx)
         print("arg_header_idxs", arg_header_idxs)
         print("col_mapping", col_mapping)
 
-        binary_vectorizer = BinaryVectorizer(rows_with_id, attr_cols, class_col)
+        binary_vectorizer = BinaryVectorizer(rows_with_id, attr_cols, class_col, id_col)
         result_data = binary_vectorizer()
+        self.__remove_rows(binary_vectorizer.removed_points)
+        id_col, attr_cols, class_col = self.__get_cols(cols, class_col_idx)
+
+        if len(attr_cols) == 2:
+            vlines = [b.value for b in result_data if b.col == 0]
+            hlines = [b.value for b in result_data if b.col == 1]
+            plot_2d(attr_cols[0], attr_cols[1], class_col, lines=(vlines, hlines))
+
 
 
     def __get_header_list(self):
@@ -54,9 +63,14 @@ class ClassifyPanel(tk.Frame):
 
     def __get_cols(
         self, col_idxs: list[int], class_col_idx: int
-    ) -> tuple[list[list], list]:
+    ) -> tuple[list, list[list], list]:
         attr_cols = []
         for idx in col_idxs:
             if idx != class_col_idx:
                 attr_cols.append(self.table_frame.data.cols[idx+1])
-        return attr_cols, self.table_frame.data.cols[class_col_idx+1]
+
+        id_col = self.table_frame.data.cols[0]
+        return id_col, attr_cols, self.table_frame.data.cols[class_col_idx+1]
+
+    def __remove_rows(self, row_ids: list[int]):
+        self.table_frame.remove_rows(row_ids)

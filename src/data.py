@@ -69,6 +69,12 @@ class Data:
         rows_data, col_mapping = self.as_rows(col_selection)
         return {id: data for id, data in zip(self.cols[0], rows_data)}, col_mapping
 
+    def remove_rows(self, row_ids: list[int]):
+        id_col_array = np.array(self.cols[0])
+        row_ids_mapped = [np.where(id_col_array == id)[0].item() for id in row_ids]
+        self.cols = np.delete(self.cols, row_ids_mapped, -1).tolist()
+
+
     def __str__(self):
         disp_str = " | ".join(self.headers) + "\n"
         disp_str += "---\n"
