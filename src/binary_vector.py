@@ -19,9 +19,9 @@ class Boundary:
 
     def classify(self, row: list[float | int]):
         if self.side == Side.LEFT:
-            return row[self.col] <= self.value
+            return int(row[self.col] <= self.value)
 
-        return row[self.col] >= self.value
+        return int(row[self.col] >= self.value)
 
     def __str__(self):
         return f"val: {self.value}, side: {self.side}, col: {self.col}, class: {self.cl}"

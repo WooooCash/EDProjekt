@@ -71,9 +71,10 @@ class Data:
 
     def remove_rows(self, row_ids: list[int]):
         id_col_array = np.array(self.cols[0])
+        # types = [type(col[0]) for col in self.cols]
         row_ids_mapped = [np.where(id_col_array == id)[0].item() for id in row_ids]
         self.cols = np.delete(self.cols, row_ids_mapped, -1).tolist()
-
+        self.cols = [parse_ints(col) for col in self.cols]
 
     def __str__(self):
         disp_str = " | ".join(self.headers) + "\n"
@@ -97,14 +98,34 @@ def process_line(line: str, delimiter: str) -> list[str]:
     return [el.strip() for el in line.split(delimiter) if el]
 
 
-def parse_ints(row: list[str]):
+def parse_types(vec: list[str], type):
     parsed_row = []
 
-    for el in row:
+    for el in vec:
+        try:
+            val = type(el)
+        except ValueError:
+            val = el
+        parsed_row.append(val)
+
+    return parsed_row
+
+
+def parse_ints(vec: list[str]):
+    parsed_row = []
+
+    for el in vec:
+        val = None
         try:
             val = int(el)
         except ValueError:
-            val = el
+            pass
+
+        if val is None:
+            try:
+                val = float(el)
+            except ValueError:
+                val = el
         parsed_row.append(val)
 
     return parsed_row
